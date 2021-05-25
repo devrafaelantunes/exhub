@@ -6,7 +6,7 @@ defmodule ExHub.Server do
 
   use GenServer
 
-  @minutes 0
+  @minutes 30
 
   def start_link(_arg) do
     GenServer.start_link(__MODULE__, "", name: :server)
@@ -57,7 +57,7 @@ defmodule ExHub.Server do
 
       %{items: requested_payload} = ExHub.get(language)
 
-      if requested_payload =! payload do
+      if requested_payload ==! payload do
         {:ok, requested_payload}
       else
         {:error, nil}

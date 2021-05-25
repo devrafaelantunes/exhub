@@ -18,6 +18,8 @@ defmodule ExHubWeb.Router do
     pipe_through :browser
 
     live "/", PageLive, :index
+    live "/search", SearchLive
+    live "/display", DisplayLive
   end
 
   # Other scopes may use custom stacks.

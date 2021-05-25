@@ -1,0 +1,15 @@
+<div class="repository-wrapper">
+    <h1><%= @result.name %></h1>
+    <img src=<%= @result.owner.avatar_url %>>
+    <p>Description: <%= @result.description %></p>
+    <p>Forks: <%= @result.forks %></p>
+    <p>Stars: <%= @result.stargazers_count %></p>
+    <p>Watchers: <%= @result.watchers_count %></p>
+    <p>Open issues: <%= @result.open_issues %></p>
+    <a href=<%= @result.html_url %>>Link</a>
+
+
+</div>
+
+
+<%= live_patch "Go Back", to: Routes.live_path(@socket, ExHubWeb.SearchLive, language: @result.language)%>
