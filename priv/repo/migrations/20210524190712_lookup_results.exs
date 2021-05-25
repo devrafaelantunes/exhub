@@ -4,7 +4,7 @@ defmodule ExHub.Repo.Migrations.LookupResults do
   def change do
     create table(:lookup_results) do
       add :language, :string
-      add :payload, :map, default: %{}
+      add :payload, {:array, :map}
 
       timestamps()
     end
