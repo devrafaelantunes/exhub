@@ -12,7 +12,8 @@ defmodule ExHub.Internal do
 
   def delete_result_by_language(language) do
     Query.by_language(language)
-    |> Repo.one()
-    |> Repo.delete()
+    |> Repo.delete_all()
+
+    # DELETE FROM lookup_results WHERE language = 'Elixir'
   end
 end
