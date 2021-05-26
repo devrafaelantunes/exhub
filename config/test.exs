@@ -20,3 +20,5 @@ config :ex_hub, ExHubWeb.Endpoint,
 
 # Print only warnings and errors during test
 config :logger, level: :warn
+
+config :ex_hub, :exhub_api, ExHubMock

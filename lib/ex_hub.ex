@@ -1,8 +1,16 @@
 defmodule ExHub do
 
-  def call(language, headers \\ []) do
-    "https://api.github.com/search/repositories?q=language:#{language}&sort=stars&order_by=desc&per_page=10"
+  @type language() :: String.t()
+  @callback get(language) :: map | {:error, String.t()}
+  def get(language, headers \\ []) do
+    language
+    |> call(headers)
+    |> content_type
+    |> decode
+  end
 
+  defp call(language, headers) do
+    "https://api.github.com/search/repositories?q=language:#{language}&sort=stars&order_by=desc&per_page=1"
     |> HTTPoison.get(headers)
     |> case do
          {:ok, %{body: raw, status_code: code, headers: headers}} ->
@@ -11,21 +19,19 @@ defmodule ExHub do
       end
   end
 
-  def content_type({ok, body, headers}) do
+  defp content_type({ok, body, headers}) do
     {ok, body, content_type(headers)}
   end
 
-  def content_type([]), do: "application/json"
-
-  def content_type([{"Content-Type", val} | _]) do
+  defp content_type([{"Content-Type", val} | _]) do
     val
     |> String.split(";")
     |> List.first
   end
 
-  def content_type([_ | t]), do: content_type(t)
+  defp content_type([_ | t]), do: content_type(t)
 
-  def decode({_ok, body, "application/json"}) do
+  defp decode({_ok, body, "application/json"}) do
     body
     |> Poison.decode(keys: :atoms)
     |> case do
@@ -34,12 +40,6 @@ defmodule ExHub do
        end
   end
 
-  def decode({ok, body, _}), do: {ok, body}
+  defp decode({ok, body, _}), do: {ok, body}
 
-  def get(language, headers \\ []) do
-      language
-      |> call(headers)
-      |> content_type
-      |> decode
-  end
 end
