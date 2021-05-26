@@ -1,16 +1,20 @@
 <%= if @results == %{} do %>
-    <h1>Select language</h1>
+    <div class="form-container">
+        <div>
+            <h1>Select Language</h1>
+        </div>
+        <div>
+            <%= f = form_for :request, "#", phx_submit: :save %>
+            <%= select f, :language, ["Elixir", "Ruby", "Erlang", "Go", "Clojure"] %>
 
-    <%= f = form_for :request, "#", phx_submit: :save %>
-    <%= label f, :language %>
-    <%= select f, :language, ["Clojure", "Elixir", "Erlang", "Go", "Ruby"] %>
-
-    <%= submit "Search", phx_disable_with: "Searching..." %>
+            <%= submit "Search", phx_disable_with: "Searching..." %>
+        </div>
+    </div>
 
 </form>
 
 <% else %>
-    <h1><%= @language %></h1>
+    <h1 id="language-header"><%= @language %>'s repositories ranked by stars.</h1>
 
     <%= live_component @socket, ExHubWeb.DisplayComponent, results: @results %>
 

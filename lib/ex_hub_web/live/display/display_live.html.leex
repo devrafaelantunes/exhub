@@ -1,12 +1,19 @@
-<div class="repository-wrapper">
-    <h1><%= @result.name %></h1>
-    <img src=<%= @result.owner.avatar_url %>>
-    <p>Description: <%= @result.description %></p>
-    <p>Forks: <%= @result.forks %></p>
-    <p>Stars: <%= @result.stargazers_count %></p>
-    <p>Watchers: <%= @result.watchers_count %></p>
-    <p>Open issues: <%= @result.open_issues %></p>
-    <a href=<%= @result.html_url %>>Link</a>
+<div id="header-container">
+    <div id="header-class">
+        <h1><strong><%= @result.name %></strong></h1>
+        <p><%= @result.description %></p>
+        <img src=<%= @result.owner.avatar_url %>>
+        <h2><%= @result.stargazers_count %> ⭐ </h2>
+    </div>
+</div>
+
+<div class="display-container">
+    <div class="display-single">
+        <p><%= @result.forks %> <strong>Forks</strong></p>
+        <p><%= @result.watchers_count %> <strong>Watchers</strong></p>
+        <p><%= @result.open_issues %> <strong>Open Issues</strong></p>
+        <a href=<%= @result.html_url %>>GitHub Link</a>
+    </div>
 </div>
 
 

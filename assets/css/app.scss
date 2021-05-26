@@ -1,6 +1,72 @@
-/* This file is for your main application css. */
+/* This file is for your main application CSS. */
 @import "./phoenix.css";
-@import "../node_modules/nprogress/nprogress.css";
+
+
+
+.repository-container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  background-color: #ccc;
+  padding: 2%;
+  border-radius: 20px;
+}
+
+.display-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.display-container > * {
+  text-align: center;
+  border-radius: 15px;
+  padding: 10px;
+}
+
+.display-single > h2 {
+  font-size: 30px;
+  padding-bottom: 20px;
+}
+
+#header-container {
+  background-color: #ccc;
+  text-align: center;
+  border-radius: 30px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.display-container > * {
+  background-color: #ccc;
+}
+
+#repo-header > img {
+  margin-bottom: 20px;
+}
+
+#repo-header > h1 {
+  padding-top: 15px;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.form-container > * {
+  text-align: center;
+  margin: 1%;
+}
+
+#language-header {
+  text-align: center;
+  background-color: #ccc;
+  padding: 2%;
+  border-radius: 100px;
+}
 
 /* LiveView specific classes for your customizations */
 .phx-no-feedback.invalid-feedback,
@@ -35,7 +101,7 @@
 
 .phx-modal-content {
   background-color: #fefefe;
-  margin: 15% auto;
+  margin: 15vh auto;
   padding: 20px;
   border: 1px solid #888;
   width: 80%;

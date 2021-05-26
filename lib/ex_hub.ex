@@ -1,7 +1,7 @@
 defmodule ExHub do
 
   def call(language, headers \\ []) do
-    "https://api.github.com/search/repositories?q=language:#{language}&sort=stars&order_by=desc&per_page=2"
+    "https://api.github.com/search/repositories?q=language:#{language}&sort=stars&order_by=desc&per_page=10"
 
     |> HTTPoison.get(headers)
     |> case do

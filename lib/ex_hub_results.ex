@@ -15,21 +15,3 @@ defmodule ExHub.Results do
     |> validate_required([:language, :payload])
   end
 end
-
-defmodule ExHub.Results.Query do
-  import Ecto.Query
-  alias ExHub.{Results, Internal}
-
-  def results() do
-    Internal.fetch_results()
-    |> Enum.reduce(%{}, fn result, acc ->
-      Map.put(acc, result.language, %{payload: result.payload, inserted_at: result.inserted_at})
-    end)
-  end
-
-  def by_language(language) do
-    from r in Results,
-      select: r,
-      where: r.language == ^language
-  end
-end

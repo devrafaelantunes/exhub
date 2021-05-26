@@ -1,8 +1,7 @@
 defmodule ExHub.Server do
-  alias ExHub.Results.Query
-  alias ExHub.Internal
+  alias ExHub.{Results, Repo}
   alias Ecto.Multi
-  alias ExHub.{Repo, Utils}
+  import Ecto.Query
 
   use GenServer
 
@@ -13,7 +12,7 @@ defmodule ExHub.Server do
   end
 
   def init(_arg) do
-    {:ok, Query.results()}
+    {:ok, query_results_db()}
   end
 
   def handle_call({:request, language}, _from, original_state) do
@@ -52,13 +51,9 @@ defmodule ExHub.Server do
         {:error, nil}
       end
     end)
-    |> Multi.run(:delete, fn _, _ ->
-      Internal.delete_result_by_language(language)
-      {:ok, :deleted}
-    end)
-    |> Multi.run(:insert, fn _, %{request_payload: request_payload} ->
-      Internal.insert(%{language: language, payload: request_payload})
-      {:ok, :inserted}
+    |> Multi.delete_all(:delete, query_by_language(language))
+    |> Multi.insert(:insert, fn %{request_payload: request_payload} ->
+      Results.changeset(%{language: language, payload: request_payload})
     end)
     |> Multi.run(:new_state, fn _, %{state: state, request_payload: request_payload} ->
       new_state =
@@ -77,9 +72,32 @@ defmodule ExHub.Server do
         {:reply, current_payload, state}
     end
   end
+
+  def query_results_db() do
+    fetch_results()
+    |> Enum.reduce(%{}, fn result, acc ->
+      Map.put(acc, result.language, %{payload: result.payload, inserted_at: result.inserted_at})
+    end)
+  end
+
+  def query_by_language(language) do
+    from r in Results,
+      select: r,
+      where: r.language == ^language
+  end
+
+
+  def insert(attrs) do
+    Results.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def fetch_results() do
+    Repo.all(Results)
+  end
+
+  def delete_result_by_language(language) do
+    query_by_language(language)
+    |> Repo.delete_all()
+  end
 end
-
-
-#insert
-#delete
-#update state
