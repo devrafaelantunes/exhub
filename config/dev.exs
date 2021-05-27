@@ -76,3 +76,4 @@ config :phoenix, :stacktrace_depth, 20
 config :phoenix, :plug_init_mode, :runtime
 
 config :ex_hub, :exhub_api, ExHub
+config :ex_hub, :exhub_server, ExHub.Server

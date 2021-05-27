@@ -55,3 +55,4 @@ config :logger, level: :info
 import_config "prod.secret.exs"
 
 config :ex_hub, :exhub_api, ExHub
+config :ex_hub, :exhub_server, ExHub.Server

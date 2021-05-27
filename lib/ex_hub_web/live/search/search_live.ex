@@ -1,7 +1,9 @@
 defmodule ExHubWeb.SearchLive do
   use ExHubWeb, :live_view
 
-  alias ExHub.{Utils, Server}
+  alias ExHub.Utils
+
+  @exhub_server Application.get_env(:ex_hub, :exhub_server)
 
   def mount(_params, _session, socket) do
     {:ok,
@@ -10,7 +12,7 @@ defmodule ExHubWeb.SearchLive do
       |> assign(:language, nil)}
   end
 
-  def handle_event("save", %{"request" => %{"language" => language}}, socket) do
+  def handle_event("search", %{"request" => %{"language" => language}}, socket) do
     get_response_and_reply(socket, language)
   end
 
@@ -23,9 +25,8 @@ defmodule ExHubWeb.SearchLive do
   end
 
   defp get_response_and_reply(socket, language) do
-    response =
-      Server.request(language)
-      |> Enum.map(fn repository -> Utils.atomify_map(repository) end)
+    {:ok, response} = apply(@exhub_server, :request, [language])
+    response = Enum.map(response, fn repository -> Utils.atomify_map(repository) end)
 
     {:noreply,
       socket

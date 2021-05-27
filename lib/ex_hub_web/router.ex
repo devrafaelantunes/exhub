@@ -17,8 +17,7 @@ defmodule ExHubWeb.Router do
   scope "/", ExHubWeb do
     pipe_through :browser
 
-    live "/", PageLive, :index
-    live "/search", SearchLive
+    live "/", SearchLive
     live "/display", DisplayLive
   end
 
@@ -35,11 +34,8 @@ defmodule ExHubWeb.Router do
   # you can use Plug.BasicAuth to set up some basic authentication
   # as long as you are also using SSL (which you should anyway).
   if Mix.env() in [:dev, :test] do
-    import Phoenix.LiveDashboard.Router
-
     scope "/" do
       pipe_through :browser
-      live_dashboard "/dashboard", metrics: ExHubWeb.Telemetry
     end
   end
 end

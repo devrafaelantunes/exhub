@@ -1,18 +1,17 @@
 defmodule ExHub.Server do
-  alias ExHub.{Results, Repo}
-  alias Ecto.Multi
-  import Ecto.Query
 
   use GenServer
 
+  alias Ecto.Multi
+  alias ExHub.{Results, Repo}
+
   @request_lifetime 30
 
+  @callback request(language :: String.t) ::
+    {:ok, list}
+    | {:error, :invalid_language}
   def request(language) do
-    if Enum.member?(ExHub.languages, language) do
-      GenServer.call(:server, {:request, language})
-    else
-      {:error, :invalid_language}
-    end
+    GenServer.call(:server, {:request, language})
   end
 
   def start_link(_arg) do
@@ -20,11 +19,18 @@ defmodule ExHub.Server do
   end
 
   def init(_arg) do
-    {:ok, query_results_db()}
+    {:ok, get_results_db()}
   end
 
   def handle_call({:request, language}, _from, original_state) do
     Multi.new
+    |> Multi.run(:validate_language, fn _, _ ->
+      if Enum.member?(ExHub.languages, language) do
+        {:ok, nil}
+      else
+        {:error, :invalid_language}
+      end
+    end)
     |> Multi.run(:state, fn _, _ ->
       if Map.has_key?(original_state, language) do
         {:ok, original_state}
@@ -60,7 +66,7 @@ defmodule ExHub.Server do
         {:error, nil}
       end
     end)
-    |> Multi.delete_all(:delete, query_by_language(language))
+    |> Multi.delete_all(:delete, Results.query_by_language(language))
     |> Multi.run(:changeset, fn _, %{request_payload: request_payload} ->
       {:ok, Results.changeset(%{language: language, payload: request_payload})}
     end)
@@ -76,23 +82,21 @@ defmodule ExHub.Server do
     |> Repo.transaction()
     |> case do
       {:ok, %{request_payload: request_payload, new_state: new_state}} ->
-        {:reply, request_payload, new_state}
+        {:reply, {:ok, request_payload}, new_state}
+
+      {:error, :validate_language, reason, _} ->
+        {:error, reason}
 
       {:error, _, _reason, %{state: state, current_payload: current_payload}} ->
-        {:reply, current_payload, state}
+        {:reply, {:ok, current_payload}, state}
     end
   end
 
-  defp query_results_db() do
-    Repo.all(Results)
+  defp get_results_db do
+    Results
+    |> Repo.all()
     |> Enum.reduce(%{}, fn result, acc ->
       Map.put(acc, result.language, %{payload: result.payload, inserted_at: result.inserted_at})
     end)
-  end
-
-  def query_by_language(language) do
-    from r in Results,
-      select: r,
-      where: r.language == ^language
   end
 end

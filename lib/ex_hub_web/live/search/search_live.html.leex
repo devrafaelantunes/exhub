@@ -4,7 +4,7 @@
             <h1>Select Language</h1>
         </div>
         <div>
-            <%= f = form_for :request, "#", phx_submit: :save %>
+            <%= f = form_for :request, "#", phx_submit: :search%>
             <%= select f, :language, ExHub.languages %>
 
             <%= submit "Search", phx_disable_with: "Searching..." %>
