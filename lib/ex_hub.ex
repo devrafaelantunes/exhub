@@ -1,6 +1,8 @@
 defmodule ExHub do
-
   @type language() :: String.t()
+
+  @languages ["Elixir", "Ruby", "Erlang", "Go", "Clojure"]
+
   @callback get(language) :: map | {:error, String.t()}
   def get(language, headers \\ []) do
     language
@@ -8,6 +10,8 @@ defmodule ExHub do
     |> content_type
     |> decode
   end
+
+  def languages(), do: @languages
 
   defp call(language, headers) do
     "https://api.github.com/search/repositories?q=language:#{language}&sort=stars&order_by=desc&per_page=1"

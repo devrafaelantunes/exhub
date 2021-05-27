@@ -5,7 +5,7 @@
         </div>
         <div>
             <%= f = form_for :request, "#", phx_submit: :save %>
-            <%= select f, :language, ["Elixir", "Ruby", "Erlang", "Go", "Clojure"] %>
+            <%= select f, :language, ExHub.languages %>
 
             <%= submit "Search", phx_disable_with: "Searching..." %>
         </div>

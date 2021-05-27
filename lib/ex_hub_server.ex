@@ -8,7 +8,11 @@ defmodule ExHub.Server do
   @request_lifetime 30
 
   def request(language) do
-    GenServer.call(:server, {:request, language})
+    if Enum.member?(ExHub.languages, language) do
+      GenServer.call(:server, {:request, language})
+    else
+      {:error, :invalid_language}
+    end
   end
 
   def start_link(_arg) do
@@ -16,7 +20,6 @@ defmodule ExHub.Server do
   end
 
   def init(_arg) do
-    IO.puts "asdf"
     {:ok, query_results_db()}
   end
 
@@ -49,9 +52,6 @@ defmodule ExHub.Server do
     end)
     |> Multi.run(:request_payload, fn _, %{current_payload: current_payload} ->
       module = Application.get_env(:ex_hub, :exhub_api)
-      #%{items: request_payload} = module.get(language)
-      IO.inspect(module)
-      IO.inspect(language)
       %{items: request_payload} = apply(module, :get, [language])
 
       if request_payload != current_payload do
@@ -90,7 +90,7 @@ defmodule ExHub.Server do
     end)
   end
 
-  defp query_by_language(language) do
+  def query_by_language(language) do
     from r in Results,
       select: r,
       where: r.language == ^language
