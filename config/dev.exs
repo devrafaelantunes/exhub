@@ -75,5 +75,5 @@ config :phoenix, :stacktrace_depth, 20
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
 
-config :ex_hub, :exhub_api, ExHub
+config :ex_hub, :exhub_api, ExHub.Request
 config :ex_hub, :exhub_server, ExHub.Server

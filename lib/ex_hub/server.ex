@@ -1,4 +1,7 @@
 defmodule ExHub.Server do
+  @moduledoc """
+    Handles the GenServer and Requesting logic.
+  """
   use GenServer
 
   alias Ecto.Multi
@@ -16,14 +19,23 @@ defmodule ExHub.Server do
     GenServer.start_link(__MODULE__, "", name: :server)
   end
 
+  # Initialize the GenServer with the results retrieved from the database.
   def init(_arg) do
     {:ok, get_results_db()}
   end
 
+  @doc """
+    This function handles the request functionality and uses GenServer as a cache.
+    The first request will be stored in both cache and db,
+    The subsequent ones are going to be validated before replacing the old results.
+
+    Returns the old result if the validation fails,
+    If it succeeds the old results are going to be deleted and replaced, returning the most recent payload.
+  """
   def handle_call({:request, language}, _from, original_state) do
     Multi.new()
     |> Multi.run(:validate_language, fn _, _ ->
-      if Enum.member?(ExHub.languages(), language) do
+      if Enum.member?(ExHub.Request.languages(), language) do
         {:ok, nil}
       else
         {:error, :invalid_language}

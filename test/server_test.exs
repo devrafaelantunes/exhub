@@ -1,4 +1,4 @@
-defmodule ExHub.Server.Test do
+defmodule ExHub.ServerTest do
   use ExHub.DataCase
 
   alias ExHub.{Repo, Server, Results}
@@ -16,17 +16,12 @@ defmodule ExHub.Server.Test do
   setup :set_mox_from_context
   setup :verify_on_exit!
 
-  describe "genserver test" do
-    test "getting db results when initializing" do
-      :sys.get_state(:server)
-    end
-  end
-
   describe "request/1" do
     test "with valid language" do
+      # Cleaning the cache
       :sys.replace_state(:server, fn _state -> %{} end)
 
-      expect(ExHubMock, :get, fn _ -> %{items: @response} end)
+      expect(ExHub.RequestMock, :get, fn _ -> %{items: @response} end)
 
       assert {:ok, @response} == Server.request(@language)
 
@@ -44,7 +39,8 @@ defmodule ExHub.Server.Test do
       :sys.replace_state(:server, fn _state -> %{} end)
 
       # The mock is expected to be called only once
-      expect(ExHubMock, :get, 1, fn _ -> %{items: @response} end)
+      expect(ExHub.RequestMock, :get, 1, fn _ -> %{items: @response} end)
+
 
       assert {:ok, _} = Server.request(@language)
       %{@language => %{inserted_at: first_request_datetime_state}} = :sys.get_state(:server)
@@ -58,6 +54,7 @@ defmodule ExHub.Server.Test do
       %Results{inserted_at: second_request_datetime_db} =
         Results.query_by_language(@language) |> Repo.one()
 
+      # Asserting that the results did not change
       assert first_request_datetime_state == second_request_datetime_state
       assert first_request_datetime_db == second_request_datetime_db
     end
@@ -65,10 +62,12 @@ defmodule ExHub.Server.Test do
     test "does not replace the result if the response from Github hasn't changed" do
       :sys.replace_state(:server, fn _state -> %{} end)
 
-      expect(ExHubMock, :get, 2, fn _ -> %{items: @response} end)
+      # The mock is expected to be called twice
+      expect(ExHub.RequestMock, :get, 2, fn _ -> %{items: @response} end)
 
       assert {:ok, _} = Server.request(@language)
 
+      # Getting the results
       [result] = Repo.all(Results)
 
       old_date =
@@ -79,6 +78,7 @@ defmodule ExHub.Server.Test do
         put_in(state, [@language, :inserted_at], old_date)
       end)
 
+      # Asserting that the results did not change
       assert {:ok, _} = Server.request(@language)
       assert [result] == Repo.all(Results)
     end
@@ -94,11 +94,13 @@ defmodule ExHub.Server.Test do
         }
       ]
 
-      expect(ExHubMock, :get, 1, fn _ -> %{items: @response} end)
-      expect(ExHubMock, :get, 1, fn _ -> %{items: other_response} end)
+      # The mock is expected to be called twice
+      expect(ExHub.RequestMock, :get, 1, fn _ -> %{items: @response} end)
+      expect(ExHub.RequestMock, :get, 1, fn _ -> %{items: other_response} end)
 
       assert {:ok, @response} == Server.request(@language)
 
+      # Getting the first result
       [first_result] = Repo.all(Results)
 
       old_date =
@@ -111,6 +113,7 @@ defmodule ExHub.Server.Test do
 
       assert {:ok, other_response} == Server.request(@language)
 
+      # Asserting that the results changed
       [second_result] = Repo.all(Results)
       refute first_result == second_result
     end

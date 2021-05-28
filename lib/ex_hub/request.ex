@@ -1,4 +1,4 @@
-defmodule ExHub do
+defmodule ExHub.Request do
   @moduledoc """
     This module is responsible for requesting the repositories to the GitHub API.
     It also decodes it to an Elixir map.
@@ -6,6 +6,9 @@ defmodule ExHub do
 
   # List of Languages
   @languages ["Elixir", "Ruby", "Erlang", "Go", "Clojure"]
+
+  # Number of results retrieved from GitHub
+  @per_page 10
 
   @callback get(language :: String.t()) :: map | {:error, String.t()}
   def get(language, headers \\ []) do
@@ -17,8 +20,9 @@ defmodule ExHub do
 
   def languages(), do: @languages
 
+  # Makes a request to the GitHub API
   defp call(language, headers) do
-    "https://api.github.com/search/repositories?q=language:#{language}&sort=stars&order_by=desc&per_page=10"
+    "https://api.github.com/search/repositories?q=language:#{language}&sort=stars&order_by=desc&per_page#{@per_page}"
     |> HTTPoison.get(headers)
     |> case do
       {:ok, %{body: raw, status_code: code, headers: headers}} ->
@@ -41,6 +45,8 @@ defmodule ExHub do
 
   defp content_type([_ | t]), do: content_type(t)
 
+
+  # Decode the response to an Elixir Map
   defp decode({_ok, body, "application/json"}) do
     body
     |> Poison.decode(keys: :atoms)

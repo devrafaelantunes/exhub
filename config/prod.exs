@@ -54,5 +54,5 @@ config :logger, level: :info
 # and configuration from environment variables.
 import_config "prod.secret.exs"
 
-config :ex_hub, :exhub_api, ExHub
+config :ex_hub, :exhub_api, ExHub.Request
 config :ex_hub, :exhub_server, ExHub.Server

@@ -5,7 +5,7 @@
         </div>
         <div>
             <%= f = form_for :request, "#", phx_submit: :search%>
-            <%= select f, :language, ExHub.languages %>
+            <%= select f, :language, ExHub.Request.languages %>
 
             <%= submit "Search", phx_disable_with: "Searching..." %>
         </div>
@@ -18,7 +18,5 @@
 
     <%= live_component @socket, ExHubWeb.DisplayComponent, results: @results %>
 
-
     <%= live_redirect "Go Back", to: Routes.live_path(@socket, ExHubWeb.SearchLive)%>
-
 <% end %>

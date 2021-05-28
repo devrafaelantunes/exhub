@@ -1,4 +1,4 @@
-defmodule ExHub.Live.Test do
+defmodule ExHubWeb.LiveView.Test do
   use ExHubWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
@@ -19,7 +19,9 @@ defmodule ExHub.Live.Test do
     owner: %{avatar_url: "www.avatar.com"}
   }
 
+  # Renders the DisplayComponent
   defp render_component(conn) do
+    # Renders the SearchLive view
     {:ok, view, _html} = live(conn, "/")
 
     expect(ExHub.ServerMock, :request, fn _ ->
@@ -33,45 +35,54 @@ defmodule ExHub.Live.Test do
        ]}
     end)
 
+    # Clicks the Search button so it renders the component
     {view, render_click(view, :search, %{"request" => %{"language" => "Elixir"}})}
   end
 
   describe "SearchLive and DisplayComponent '/' route" do
     test "connecting and mounting", %{conn: conn} do
+      # Renders the SearchLive view
       {:ok, view, html} = live(conn, "/")
 
       assert html =~ "<h1>Select Language</h1>"
       assert view.module == ExHubWeb.SearchLive
 
-      Enum.each(ExHub.languages(), fn language ->
+      # Asserts that each language has been rendered
+      Enum.each(ExHub.Request.languages(), fn language ->
         assert html =~ language
       end)
     end
 
     test "searching for repositories", %{conn: conn} do
+      # Renders the DisplayComponent
       {_view, html} = render_component(conn)
 
+      # Asserts that the component has been rendered
       assert html =~ "Elixir&#39;s repositories ranked by stars"
       assert html =~ "ExHub"
       assert html =~ "GitHub Fetcher"
       assert html =~ "999999"
     end
 
-    test "redirecting to the main page when clicking go back", %{conn: conn} do
+    test "redirecting to the main page when go back is clicked", %{conn: conn} do
       {view, _html} = render_component(conn)
 
+      # Clicks the anchor tag
       assert view
              |> element("a", "Go Back")
              |> render_click()
 
+      # Asserts that the view has been redirected
       assert_redirect(view, "/")
     end
   end
 
   describe "DisplayLive '/display' route" do
     test "display", %{conn: conn} do
+      # Renders the DisplayLive view
       {:ok, view, html} = live(conn, Routes.live_path(conn, ExHubWeb.DisplayLive, @repository))
 
+      # Asserts that the LiveView rendered the repository that has been passed as a param
       assert view.module == ExHubWeb.DisplayLive
       assert html =~ @repository.name
       assert html =~ @repository.description
@@ -83,13 +94,16 @@ defmodule ExHub.Live.Test do
       assert html =~ @repository.owner.avatar_url
     end
 
-    test "rerendering display component when clicking go back", %{conn: conn} do
+    test "rerendering display component when go back is clicked", %{conn: conn} do
+      # Renders the DisplayLive view
       {:ok, view, _html} = live(conn, Routes.live_path(conn, ExHubWeb.DisplayLive, @repository))
 
+      # Clicks the anchor tag
       assert view
              |> element("a", "Go Back")
              |> render_click()
 
+      # Asserts that the view has been patched
       assert_patch(view, "/?language=#{@repository.language}")
     end
   end

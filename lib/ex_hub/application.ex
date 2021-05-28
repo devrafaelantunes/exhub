@@ -21,13 +21,6 @@ defmodule ExHub.Application do
       ExHub.Server
     ]
 
-    # children =
-    #   if Mix.env != :test do
-    #     base_children ++ [ExHub.Server]
-    #   else
-    #     base_children
-    #   end
-
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: ExHub.Supervisor]

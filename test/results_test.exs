@@ -1,4 +1,4 @@
-defmodule ExHub.Results.Test do
+defmodule ExHub.ResultsTest do
   use ExHub.DataCase
 
   alias ExHub.Results
