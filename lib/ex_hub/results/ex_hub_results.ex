@@ -6,7 +6,7 @@ defmodule ExHub.Results do
   use Ecto.Schema
   import Ecto.{Changeset, Query}
 
-  schema "lookup_results" do
+  schema "results" do
     field :language, :string
     field :payload, {:array, :map}
 

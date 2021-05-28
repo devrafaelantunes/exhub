@@ -18,7 +18,7 @@ defmodule ExHub do
   def languages(), do: @languages
 
   defp call(language, headers) do
-    "https://api.github.com/search/repositories?q=language:#{language}&sort=stars&order_by=desc&per_page=1"
+    "https://api.github.com/search/repositories?q=language:#{language}&sort=stars&order_by=desc&per_page=10"
     |> HTTPoison.get(headers)
     |> case do
          {:ok, %{body: raw, status_code: code, headers: headers}} ->

@@ -6,7 +6,7 @@ defmodule ExHub.Results.Test do
   describe "creating changeset" do
     test "with valid params" do
       changeset =
-        Results.changeset(%{language: "Some Language", payload: [%{}]})
+        Results.changeset(%{language: "Elixir", payload: [%{}]})
 
       assert changeset.errors == []
     end

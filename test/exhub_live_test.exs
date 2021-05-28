@@ -39,10 +39,11 @@ defmodule ExHub.Live.Test do
 
       assert html =~ "<h1>Select Language</h1>"
       assert view.module == ExHubWeb.SearchLive
-      Enum.reduce(ExHub.languages, fn language, _acc ->
+      Enum.each(ExHub.languages, fn language ->
         assert html =~ language
       end)
     end
+
     test "searching for repositories" , %{conn: conn} do
       {_view, html} = render_component(conn)
 
@@ -51,6 +52,7 @@ defmodule ExHub.Live.Test do
       assert html =~ "GitHub Fetcher"
       assert html =~ "999999"
     end
+
     test "redirecting to the main page when clicking go back", %{conn: conn} do
       {view, _html} = render_component(conn)
 
@@ -75,6 +77,7 @@ defmodule ExHub.Live.Test do
       assert html =~ @repository.html_url
       assert html =~ @repository.owner.avatar_url
     end
+
     test "rerendering display component when clicking go back", %{conn: conn} do
       {:ok, view, _html} = live(conn, Routes.live_path(conn, ExHubWeb.DisplayLive, @repository))
 
