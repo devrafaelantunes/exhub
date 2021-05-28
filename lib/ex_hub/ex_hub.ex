@@ -21,10 +21,12 @@ defmodule ExHub do
     "https://api.github.com/search/repositories?q=language:#{language}&sort=stars&order_by=desc&per_page=10"
     |> HTTPoison.get(headers)
     |> case do
-         {:ok, %{body: raw, status_code: code, headers: headers}} ->
-           {code, raw, headers}
-         {:error, %{reason: reason}} -> {:error, reason, []}
-      end
+      {:ok, %{body: raw, status_code: code, headers: headers}} ->
+        {code, raw, headers}
+
+      {:error, %{reason: reason}} ->
+        {:error, reason, []}
+    end
   end
 
   defp content_type({ok, body, headers}) do
@@ -34,7 +36,7 @@ defmodule ExHub do
   defp content_type([{"Content-Type", val} | _]) do
     val
     |> String.split(";")
-    |> List.first
+    |> List.first()
   end
 
   defp content_type([_ | t]), do: content_type(t)
@@ -43,9 +45,9 @@ defmodule ExHub do
     body
     |> Poison.decode(keys: :atoms)
     |> case do
-         {:ok, %{items: items} = _parsed} -> %{items: items}
-         _ -> {:error, body}
-       end
+      {:ok, %{items: items} = _parsed} -> %{items: items}
+      _ -> {:error, body}
+    end
   end
 
   defp decode({ok, body, _}), do: {ok, body}

@@ -1,5 +1,4 @@
 defmodule ExHub.Server do
-
   use GenServer
 
   alias Ecto.Multi
@@ -8,7 +7,7 @@ defmodule ExHub.Server do
   # Time (in minutes) that enables the user to make another request.
   @request_lifetime 30
 
-  @callback request(language :: String.t) :: {:ok, list} | {:error, :invalid_language}
+  @callback request(language :: String.t()) :: {:ok, list} | {:error, :invalid_language}
   def request(language) do
     GenServer.call(:server, {:request, language})
   end
@@ -22,9 +21,9 @@ defmodule ExHub.Server do
   end
 
   def handle_call({:request, language}, _from, original_state) do
-    Multi.new
+    Multi.new()
     |> Multi.run(:validate_language, fn _, _ ->
-      if Enum.member?(ExHub.languages, language) do
+      if Enum.member?(ExHub.languages(), language) do
         {:ok, nil}
       else
         {:error, :invalid_language}

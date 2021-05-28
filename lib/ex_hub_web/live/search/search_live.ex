@@ -7,9 +7,9 @@ defmodule ExHubWeb.SearchLive do
 
   def mount(_params, _session, socket) do
     {:ok,
-      socket
-      |> assign(:results, %{})
-      |> assign(:language, nil)}
+     socket
+     |> assign(:results, %{})
+     |> assign(:language, nil)}
   end
 
   def handle_event("search", %{"request" => %{"language" => language}}, socket) do
@@ -29,8 +29,8 @@ defmodule ExHubWeb.SearchLive do
     response = Enum.map(response, fn repository -> Utils.atomify_map(repository) end)
 
     {:noreply,
-      socket
-      |> assign(:results, response)
-      |> assign(:language, language)}
+     socket
+     |> assign(:results, response)
+     |> assign(:language, language)}
   end
 end

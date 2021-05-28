@@ -10,7 +10,7 @@ defmodule ExHub.Results do
     field :language, :string
     field :payload, {:array, :map}
 
-    timestamps([type: :utc_datetime_usec])
+    timestamps(type: :utc_datetime_usec)
   end
 
   def changeset(attrs \\ %{}) do

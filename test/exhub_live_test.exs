@@ -23,11 +23,14 @@ defmodule ExHub.Live.Test do
     {:ok, view, _html} = live(conn, "/")
 
     expect(ExHub.ServerMock, :request, fn _ ->
-      {:ok, [%{
-        name: @repository.name,
-        description: @repository.description,
-        stargazers_count: @repository.stargazers_count
-      }]}
+      {:ok,
+       [
+         %{
+           name: @repository.name,
+           description: @repository.description,
+           stargazers_count: @repository.stargazers_count
+         }
+       ]}
     end)
 
     {view, render_click(view, :search, %{"request" => %{"language" => "Elixir"}})}
@@ -39,12 +42,13 @@ defmodule ExHub.Live.Test do
 
       assert html =~ "<h1>Select Language</h1>"
       assert view.module == ExHubWeb.SearchLive
-      Enum.each(ExHub.languages, fn language ->
+
+      Enum.each(ExHub.languages(), fn language ->
         assert html =~ language
       end)
     end
 
-    test "searching for repositories" , %{conn: conn} do
+    test "searching for repositories", %{conn: conn} do
       {_view, html} = render_component(conn)
 
       assert html =~ "Elixir&#39;s repositories ranked by stars"
@@ -57,8 +61,9 @@ defmodule ExHub.Live.Test do
       {view, _html} = render_component(conn)
 
       assert view
-        |> element("a", "Go Back")
-        |> render_click()
+             |> element("a", "Go Back")
+             |> render_click()
+
       assert_redirect(view, "/")
     end
   end
@@ -82,8 +87,9 @@ defmodule ExHub.Live.Test do
       {:ok, view, _html} = live(conn, Routes.live_path(conn, ExHubWeb.DisplayLive, @repository))
 
       assert view
-        |> element("a", "Go Back")
-        |> render_click()
+             |> element("a", "Go Back")
+             |> render_click()
+
       assert_patch(view, "/?language=#{@repository.language}")
     end
   end

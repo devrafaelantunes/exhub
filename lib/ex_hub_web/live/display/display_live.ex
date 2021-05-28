@@ -4,11 +4,10 @@ defmodule ExHubWeb.DisplayLive do
   alias ExHub.Utils
 
   def handle_params(result, _url, socket) do
-    result =
-      Utils.atomify_map(result)
+    result = Utils.atomify_map(result)
 
     {:noreply,
-      socket
-      |> assign(:result, result)}
+     socket
+     |> assign(:result, result)}
   end
 end

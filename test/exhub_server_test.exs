@@ -5,14 +5,16 @@ defmodule ExHub.Server.Test do
   import Mox
 
   @language "Elixir"
-  @response [%{
-    description: :description,
-    forks: :forks,
-    name: :name
-  }]
+  @response [
+    %{
+      description: :description,
+      forks: :forks,
+      name: :name
+    }
+  ]
 
-   setup :set_mox_from_context
-   setup :verify_on_exit!
+  setup :set_mox_from_context
+  setup :verify_on_exit!
 
   describe "genserver test" do
     test "getting db results when initializing" do
@@ -46,11 +48,15 @@ defmodule ExHub.Server.Test do
 
       assert {:ok, _} = Server.request(@language)
       %{@language => %{inserted_at: first_request_datetime_state}} = :sys.get_state(:server)
-      %Results{inserted_at: first_request_datetime_db} = Results.query_by_language(@language) |> Repo.one()
+
+      %Results{inserted_at: first_request_datetime_db} =
+        Results.query_by_language(@language) |> Repo.one()
 
       assert {:ok, _} = Server.request(@language)
       %{@language => %{inserted_at: second_request_datetime_state}} = :sys.get_state(:server)
-      %Results{inserted_at: second_request_datetime_db} = Results.query_by_language(@language) |> Repo.one()
+
+      %Results{inserted_at: second_request_datetime_db} =
+        Results.query_by_language(@language) |> Repo.one()
 
       assert first_request_datetime_state == second_request_datetime_state
       assert first_request_datetime_db == second_request_datetime_db
@@ -80,11 +86,13 @@ defmodule ExHub.Server.Test do
     test "replaces the result if the response from Github has changed" do
       :sys.replace_state(:server, fn _state -> %{} end)
 
-      other_response = [%{
-        description: :other_description,
-        forks: :forks,
-        name: :other_name
-      }]
+      other_response = [
+        %{
+          description: :other_description,
+          forks: :forks,
+          name: :other_name
+        }
+      ]
 
       expect(ExHubMock, :get, 1, fn _ -> %{items: @response} end)
       expect(ExHubMock, :get, 1, fn _ -> %{items: other_response} end)
