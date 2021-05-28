@@ -13,6 +13,15 @@ config :ex_hub, ExHubWeb.Endpoint,
   url: [host: "example.com", port: 80],
   cache_static_manifest: "priv/static/cache_manifest.json"
 
+# Configure your database
+config :ex_hub, ExHub.Repo,
+  username: System.get_env("PGUSER"),
+  password: System.get_env("PGPASSWORD"),
+  database: System.get_env("PGDATABASE"),
+  hostname: System.get_env("PGHOST"),
+  port: System.get_env("PGPORT"),
+  pool_size: 10
+
 # Do not print debug messages in production
 config :logger, level: :info
 
