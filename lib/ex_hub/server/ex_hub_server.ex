@@ -5,11 +5,10 @@ defmodule ExHub.Server do
   alias Ecto.Multi
   alias ExHub.{Results, Repo}
 
+  # Time (in minutes) that enables the user to make another request.
   @request_lifetime 30
 
-  @callback request(language :: String.t) ::
-    {:ok, list}
-    | {:error, :invalid_language}
+  @callback request(language :: String.t) :: {:ok, list} | {:error, :invalid_language}
   def request(language) do
     GenServer.call(:server, {:request, language})
   end

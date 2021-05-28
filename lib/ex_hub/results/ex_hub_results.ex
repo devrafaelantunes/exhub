@@ -1,4 +1,8 @@
 defmodule ExHub.Results do
+  @moduledoc """
+    Result's schema, changeset and query.
+  """
+
   use Ecto.Schema
   import Ecto.{Changeset, Query}
 

@@ -1,9 +1,13 @@
 defmodule ExHub do
-  @type language() :: String.t()
+  @moduledoc """
+    This module is responsible for requesting the repositories to the GitHub API.
+    It also decodes it to an Elixir map.
+  """
 
+  # List of Languages
   @languages ["Elixir", "Ruby", "Erlang", "Go", "Clojure"]
 
-  @callback get(language) :: map | {:error, String.t()}
+  @callback get(language :: String.t()) :: map | {:error, String.t()}
   def get(language, headers \\ []) do
     language
     |> call(headers)
@@ -45,5 +49,4 @@ defmodule ExHub do
   end
 
   defp decode({ok, body, _}), do: {ok, body}
-
 end

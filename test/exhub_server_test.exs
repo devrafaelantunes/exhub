@@ -36,9 +36,6 @@ defmodule ExHub.Server.Test do
       # Language result was stored in the database
       results = Results.query_by_language(@language) |> Repo.one()
       assert results.language == @language
-
-      # colocar query no results
-      #assert results.payload == [@response]
     end
 
     test "multiple requests hit the GitHub API only once when requesting below the results lifetime" do
@@ -109,9 +106,5 @@ defmodule ExHub.Server.Test do
       [second_result] = Repo.all(Results)
       refute first_result == second_result
     end
-
-    # test "with invalid language" do
-    #   assert Server.request("Nuuvem") == {:error, :invalid_language}
-    # end
-  end # falta aqui
+  end
 end
